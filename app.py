@@ -8,6 +8,10 @@ db = client.dbsparta
 import requests
 from bs4 import BeautifulSoup
 
+
+
+# ----------------------
+
 @app.route('/')
 def home():
     return render_template('index.html')
@@ -16,7 +20,7 @@ def home():
 def review_post():
     star_receive = request.form['star_give']
     comment_receive = request.form['comment_give']
-    nickname_recieve= request.form['nickname_give']
+    nickname_receive= request.form['nickname_give']
 
 
     doc={
@@ -34,7 +38,6 @@ def review_post():
 def review_get():
     all_reviews = list(db.review.find({},{'_id':False}))
     return jsonify({'result':all_reviews})
-
 
 
 @app.route('/review/<string:nickname>', methods=['DELETE']) 
