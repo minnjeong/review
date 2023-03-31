@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="ko">
 
+
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -16,6 +18,8 @@
         crossorigin="anonymous"></script>
 
     <script>
+        app.set('view engine','ejs');
+
         function open_box() {
             $('#review_box').show()
         }
@@ -23,13 +27,27 @@
             $('#review_box').hide()
         }
 
-        // 스파르타피디아 복붙-----------------------------------
+        // function review_posting(num) {
+        //     window.location.href = `/review/${num}`
+        // }
+
 
         $(document).ready(function () {
             listing();
+            
         });
-
+        
         function listing() {
+            fetch('/movie').then((res) => res.json()).then((data) => {
+                let rows = data['movie']
+                rows.forEach((a) => {
+                    console.log(a)
+
+                    let title = a['title']
+                    let image = a['image']
+                    let star = a['star']
+                })
+            })
             fetch('/review').then((res) => res.json()).then((data) => {
                 let rows = data['result']
                 $('#comment-list').empty()
@@ -49,7 +67,7 @@
                                                 <p class="mycomment">${comment}</p>
                                                 <footer class="blockquote-footer">${nickname}</footer>   
                                             </blockquote>
-                                            <button onclick="del_review(${nickname})" type="button" class="btn btn-outline-danger">삭제</button>
+                                            <button onclick="del_review('${nickname}')" type="button" class="btn btn-outline-danger">삭제</button>
                                         </div>
                                     </div>`
 
@@ -75,12 +93,19 @@
         }
 
         function del_review(nickname) {
-            fetch(`/movie/${nickname}`, { method: 'DELETE' }).then(res => res.json()).then(data => { console.log(data); listing(); });
+            fetch(`/review/${nickname}`, { method: 'DELETE' }).then(res => res.json()).then(data => { console.log(data); listing(); });
         }
+
+
     </script>
 
 
     <style>
+        a{
+            text-decoration: none;
+            color: rgb(34, 34, 34);
+        }
+
         .card-wrapper {
             display: flex;
             justify-content: center;
@@ -112,16 +137,22 @@
         .star_score {
             /* width: 50px; */
             height: 22px;
-            
+
         }
+
         .main_score {
             display: flex;
             align-items: baseline;
             align-content: center;
         }
-        .info_score{
+
+        .info_score {
             margin-right: 16px
         }
+        .poster{
+            margin-top: 20px;
+        }
+        
     </style>
 
 
@@ -139,10 +170,10 @@
                 <div class="movie_info">
                     <h3 class="movie_title">
                         <!-- 링크, 제목 -->
-                        <a href="">제목</a>
+                        <a href="./basic.naver?code=217747">웅남이</a>
                     </h3>
                     <!-- 서브타이틀, 개봉년도 -->
-                    <strong class="movie_sub_title" title="서브타이틀">서브타이틀</strong>
+                    <strong class="movie_sub_title" title="서브타이틀">woongnami, 2023</strong>
                     <!-- 관람객, 기자.평론가 점수 / 별 잘 모르겠습니다..-->
                     <div class="main_score">
                         <div class="info_score">관람객 평점</div>
@@ -164,14 +195,14 @@
                         <dd>
                             <p>
                                 <span>
-                                    <a href="">장르 입력</a>
+                                    <a href="/movie/sdb/browsing/bmovie.naver?genre=11">코미디</a>
                                     ,
-                                    <a href="">장르 입력</a>
+                                    <a href="/movie/sdb/browsing/bmovie.naver?genre=19">액션</a>
                                 </span>
                                 <span class="line"> | </span>
                                 <span>
-                                    <a href="">년도</a>
-                                    <a href="">일자</a>
+                                    <a href="/movie/sdb/browsing/bmovie.naver?open=2023"> 2023</a>
+                                    <a href="/movie/sdb/browsing/bmovie.naver?open=20230322">.03.22</a>
                                     개봉
                                 </span>
                             </p>
@@ -181,9 +212,8 @@
             </div>
 
             <!-- 영화 포스터 -->
-            <div class="poster">
-                <a href="#" onclick="">
-                    <img src="" alt="제목">
+                <a href="#" onclick="" class="poster">
+                    <img src="https://movie-phinf.pstatic.net/20230322_142/1679450718624pOFXc_JPEG/movie_image.jpg?type=m203_290_2" alt="웅남이" >
                 </a>
             </div>
         </div>
@@ -198,7 +228,7 @@
         <div class="myreview_write" id="review_box">
             <div class="input-group mb-3">
                 <span class="input-group-text" id="inputGroup-sizing-default">닉네임</span>
-                <input type="text" class="form-control" aria-label="Sizing example input"
+                <input id="nickname" type="text" class="form-control" aria-label="Sizing example input"
                     aria-describedby="inputGroup-sizing-default">
             </div>
             <div class="input-group mb-3">
